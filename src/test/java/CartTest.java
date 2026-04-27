@@ -8,7 +8,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.testng.Assert;
+import org.testng.asserts.SoftAssert;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -38,10 +38,10 @@ public class CartTest {
 
     @Test
     public void checkCartItem() {
+        // Создаем объект SoftAssert
+        SoftAssert softAssert = new SoftAssert();
 
-        // Шаг a: Залогиниться
-        System.out.println("Шаг 1: Логин в систему");
-
+        // Шаг a: Авторизация
         WebElement usernameField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("user-name")));
         WebElement passwordField = driver.findElement(By.id("password"));
         WebElement loginButton = driver.findElement(By.id("login-button"));
@@ -52,11 +52,8 @@ public class CartTest {
 
         // Ожидаем загрузки страницы с товарами
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("inventory_list")));
-        System.out.println("Успешный вход в систему");
 
         // Шаг b: Добавить товар в корзину (добавляем первый товар - Sauce Labs Backpack)
-        System.out.println("Шаг 2: Добавление товара в корзину");
-
         String expectedProductName = "Sauce Labs Backpack";
         String expectedProductPrice = "$29.99";
 
@@ -67,12 +64,9 @@ public class CartTest {
         String actualProductName = productNameElement.getText();
         String actualProductPrice = productPriceElement.getText();
 
-        System.out.println("Выбран товар: " + actualProductName + ", цена: " + actualProductPrice);
-
         // Добавляем товар в корзину
         WebElement addToCartButton = driver.findElement(By.xpath("//div[text()='" + expectedProductName + "']/ancestor::div[@class='inventory_item_description']//button[text()='Add to cart']"));
         addToCartButton.click();
-        System.out.println("Товар добавлен в корзину");
 
         // Небольшая пауза для обновления UI
         try {
@@ -81,19 +75,14 @@ public class CartTest {
             e.printStackTrace();
         }
 
-        // Шаг c: Перейти в корзину
-        System.out.println("Шаг 3: Переход в корзину");
-
+        // Шаг с: Перейти в корзину
         WebElement cartIcon = driver.findElement(By.className("shopping_cart_link"));
         cartIcon.click();
 
         // Ожидаем загрузки страницы корзины
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("cart_list")));
-        System.out.println("Страница корзины загружена");
 
-        // Шаг d: Проверить стоимость товара и его имя в корзине
-        System.out.println("Шаг 4: Проверка данных в корзине");
-
+        // Шаг d: Проверить стоимость товара и его имя в корзине:
         // Находим название товара в корзине
         WebElement cartProductName = driver.findElement(By.xpath("//div[@class='inventory_item_name' and text()='" + expectedProductName + "']"));
         String cartProductNameText = cartProductName.getText();
@@ -102,17 +91,14 @@ public class CartTest {
         WebElement cartProductPrice = driver.findElement(By.xpath("//div[text()='" + expectedProductName + "']/ancestor::div[@class='cart_item']//div[@class='inventory_item_price']"));
         String cartProductPriceText = cartProductPrice.getText();
 
-        System.out.println("Товар в корзине: " + cartProductNameText + ", цена: " + cartProductPriceText);
-
-        // Проверки assertEquals
-        Assert.assertEquals(cartProductNameText, expectedProductName,
+        // Проверки с использованием SoftAssert
+        softAssert.assertEquals(cartProductNameText, expectedProductName,
                 "Название товара в корзине не соответствует ожидаемому!");
-        Assert.assertEquals(cartProductPriceText, expectedProductPrice,
+        softAssert.assertEquals(cartProductPriceText, expectedProductPrice,
                 "Цена товара в корзине не соответствует ожидаемой!");
 
-        System.out.println("Проверки пройдены успешно!");
-        System.out.println("Ожидалось: " + expectedProductName + " - " + expectedProductPrice);
-        System.out.println("Фактически: " + cartProductNameText + " - " + cartProductPriceText);
+        // Выполняем все проверки и собираем результаты
+        softAssert.assertAll();
     }
 
     @AfterMethod
