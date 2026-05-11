@@ -1,14 +1,13 @@
 package pages;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import java.util.List;
 
 public class CartPage extends BasePage {
 
-    // Локаторы как константы (вместо аннотаций @FindBy)
+    // Локаторы как константы
     private final By cartList = By.className("cart_list");
     private final By cartItems = By.className("cart_item");
     private final By firstItemName = By.xpath("//div[@class='cart_item'][1]//div[@class='inventory_item_name']");
@@ -17,17 +16,9 @@ public class CartPage extends BasePage {
     private final By checkoutButton = By.id("checkout");
     private final By emptyCartMessage = By.className("removed_cart_item");
 
-    public CartPage(WebDriver driver) {
-        super(driver);
-    }
-
-    // Вспомогательный метод для получения элемента (опционально)
-    private WebElement find(By locator) {
-        return driver.findElement(locator);
-    }
-
-    private List<WebElement> findAll(By locator) {
-        return driver.findElements(locator);
+    // Конструктор без параметров (driver получаем через DriverManager)
+    public CartPage() {
+        super();
     }
 
     public String getFirstItemName() {
@@ -73,7 +64,11 @@ public class CartPage extends BasePage {
     }
 
     public boolean isCartPageLoaded() {
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(cartList)).isDisplayed();
+        try {
+            return wait.until(ExpectedConditions.visibilityOfElementLocated(cartList)).isDisplayed();
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     // Удаление конкретного товара по имени

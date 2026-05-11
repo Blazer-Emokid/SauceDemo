@@ -8,23 +8,21 @@ public class CartTest extends BaseTest {
     private static final String EXPECTED_ITEM_NAME = "Sauce Labs Backpack";
     private static final String EXPECTED_ITEM_PRICE = "$29.99";
 
-    // Переход в корзину по иконке + проверка названия товара
-    @Test
+    @Test(groups = {"smoke", "regression", "cart"},
+            description = "Добавление товара в корзину и проверка соответствия названия товара",
+            testName = "Проверка названия товара в корзине")
     public void testCartPageNavigationAndItemName() {
-        // Предусловие: товар добавлен в корзину (через ProductsPage)
         loginAsStandardUser();
-        productsPage.addToCart(0);  // индекс 0 = "Sauce Labs Backpack"
-
-        // Переход в корзину по иконке
+        productsPage.addToCart(0);
         productsPage.goToCart();
 
-        // Проверка названия товара в корзине
         Assert.assertEquals(cartPage.getFirstItemName(), EXPECTED_ITEM_NAME,
                 "Название товара в корзине не совпадает");
     }
 
-    // Проверка цены товара в корзине
-    @Test
+    @Test(groups = {"regression", "cart"},
+            description = "Проверка соответствия цены товара после добавления в корзину",
+            testName = "Проверка цены товара в корзине")
     public void testCartItemPrice() {
         loginAsStandardUser();
         productsPage.addToCart(0);
@@ -34,65 +32,58 @@ public class CartTest extends BaseTest {
                 "Цена товара в корзине не совпадает");
     }
 
-    // Удаление товара из корзины
-    @Test
+    @Test(groups = {"regression", "cart"},
+            description = "Удаление товара из корзины и проверка что корзина стала пустой",
+            testName = "Проверка удаления товара из корзины")
     public void testRemoveItemFromCart() {
         loginAsStandardUser();
         productsPage.addToCart(0);
         productsPage.goToCart();
 
-        // Проверяем, что товар есть
         softAssert.assertTrue(cartPage.isItemInCart(EXPECTED_ITEM_NAME),
                 "Прежде чем удалять надобно в корзину товар добавить");
 
-        // Удаляем товар
         cartPage.removeFirstItem();
 
-        // Корзина пуста (нет элементов .cart_item)
         softAssert.assertTrue(cartPage.isCartEmpty(),
                 "После удаления корзина должна быть пустой");
 
-        // Проверяем, что появился .removed_cart_item элемент в DOM
         softAssert.assertTrue(cartPage.isEmptyCartItemInDom(),
                 "Должно отображаться сообщение о пустой корзине");
 
         softAssert.assertAll();
     }
 
-    // Проверка перехода к странице Checkout для оформления заказа
-    @Test
+    @Test(groups = {"regression", "checkout", "cart"},
+            description = "Переход к оформлению заказа из корзины",
+            testName = "Проверка перехода к оформлению заказа")
     public void testGoToCheckout() {
         loginAsStandardUser();
         productsPage.addToCart(0);
         productsPage.goToCart();
 
-        // Переходим к оформлению и проверяем что открылась страница checkout-step-one.html
         cartPage.clickCheckout();
 
-        Assert.assertTrue(driver.getCurrentUrl().contains("/checkout-step-one.html"),
+        Assert.assertTrue(getDriver().getCurrentUrl().contains("/checkout-step-one.html"),
                 "Должна открыться страница оформления заказа");
     }
 
-    // Полный тест корзины с SoftAssert
-    @Test
+    @Test(groups = {"regression", "cart", "fullflow"},
+            description = "Полный сценарий: добавление товара, проверка корзины и переход к оформлению",
+            testName = "Полный тест корзины от добавления до оформления")
     public void testFullCartFlow() {
         loginAsStandardUser();
 
-        // Добавляем товар
         productsPage.addToCart(0);
-
-        // Переходим в корзину
         productsPage.goToCart();
 
-        // Проверяем имя и цену
         softAssert.assertEquals(cartPage.getFirstItemName(), EXPECTED_ITEM_NAME,
                 "Название товара не совпадает");
         softAssert.assertEquals(cartPage.getFirstItemPrice(), EXPECTED_ITEM_PRICE,
                 "Цена товара не совпадает");
 
-        // Переходим к оформлению
         cartPage.clickCheckout();
-        softAssert.assertTrue(driver.getCurrentUrl().contains("/checkout-step-one.html"),
+        softAssert.assertTrue(getDriver().getCurrentUrl().contains("/checkout-step-one.html"),
                 "URL не соответствует странице оформления");
 
         softAssert.assertAll();

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Cross Browser Test Suite" parallel="tests" thread-count="4">
+
+    <listeners>
+        <listener class-name="utils.TestListener"/>
+        <listener class-name="utils.AnnotationTransformer"/>
+    </listeners>
+
+    <!-- LoginTest в Chrome -->
+    <test name="Login Tests - Chrome">
+        <parameter name="browser" value="chrome"/>
+        <classes>
+            <class name="tests.LoginTest">
+                <methods>
+                    <include name="testSuccessfulLogin"/>
+                    <include name="testLockedUserLogin"/>
+                    <include name="testInvalidCredentials"/>
+                    <include name="testEmptyCredentials"/>
+                    <include name="testProblemUserLogin"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+    <!-- LoginTest в Firefox -->
+    <test name="Login Tests - Firefox">
+        <parameter name="browser" value="firefox"/>
+        <classes>
+            <class name="tests.LoginTest">
+                <methods>
+                    <include name="testSuccessfulLogin"/>
+                    <include name="testLockedUserLogin"/>
+                    <include name="testInvalidCredentials"/>
+                    <include name="testEmptyCredentials"/>
+                    <include name="testProblemUserLogin"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+    <!-- CartTest в Chrome -->
+    <test name="Cart Tests - Chrome">
+        <parameter name="browser" value="chrome"/>
+        <classes>
+            <class name="tests.CartTest">
+                <methods>
+                    <include name="testCartPageNavigationAndItemName"/>
+                    <include name="testCartItemPrice"/>
+                    <include name="testRemoveItemFromCart"/>
+                    <include name="testGoToCheckout"/>
+                    <include name="testFullCartFlow"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+    <!-- CartTest в Firefox -->
+    <test name="Cart Tests - Firefox">
+        <parameter name="browser" value="firefox"/>
+        <classes>
+            <class name="tests.CartTest">
+                <methods>
+                    <include name="testCartPageNavigationAndItemName"/>
+                    <include name="testCartItemPrice"/>
+                    <include name="testRemoveItemFromCart"/>
+                    <include name="testGoToCheckout"/>
+                    <include name="testFullCartFlow"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+</suite>
