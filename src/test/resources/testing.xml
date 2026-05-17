@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="SauceDemo Test Suite" parallel="tests" thread-count="4">
+
+    <listeners>
+        <listener class-name="utils.TestListener"/>
+        <listener class-name="utils.AnnotationTransformer"/>
+    </listeners>
+
+    <!-- Запуск тестов авторизации в отдельном потоке -->
+    <test name="Login Tests">
+        <classes>
+            <class name="tests.LoginTest">
+                <methods>
+                    <include name="testSuccessfulLogin"/>
+                    <include name="testLockedUserLogin"/>
+                    <include name="testInvalidCredentials"/>
+                    <include name="testEmptyCredentials"/>
+                    <include name="testProblemUserLogin"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+    <!-- Запуск Cart тестов в отдельном потоке -->
+    <test name="Cart Tests">
+        <classes>
+            <class name="tests.CartTest">
+                <methods>
+                    <include name="testCartPageNavigationAndItemName"/>
+                    <include name="testCartItemPrice"/>
+                    <include name="testRemoveItemFromCart"/>
+                    <include name="testGoToCheckout"/>
+                    <include name="testFullCartFlow"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+    <!-- Запуск только смоук-тестов из всех классов -->
+    <test name="Smoke Tests Only">
+        <groups>
+            <run>
+                <include name="smoke"/>
+            </run>
+        </groups>
+        <packages>
+            <package name="tests.*"/>
+        </packages>
+    </test>
+
+    <!-- Запуск только негативных тестов -->
+    <test name="Negative Tests Only">
+        <groups>
+            <run>
+                <include name="negative"/>
+            </run>
+        </groups>
+        <packages>
+            <package name="tests.*"/>
+        </packages>
+    </test>
+
+    <!-- Запуск полного регресса -->
+    <test name="Full Regression">
+        <groups>
+            <run>
+                <include name="regression"/>
+            </run>
+        </groups>
+        <packages>
+            <package name="tests.*"/>
+        </packages>
+    </test>
+
+</suite>
